@@ -1,4 +1,4 @@
-NAFILCPP = nafil.cc 
+NAFILCPP = nafil.cc nafil-runner.cc
 
 
 AM_CPPFLAGS = -I$(srcdir)/../include
