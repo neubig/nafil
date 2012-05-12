@@ -73,17 +73,19 @@ void NabssRunner::Run(const ConfigNabssRunner & config) {
     cerr << endl;
     // Tabulate the initial scores for the big data
     cerr << "Tabulating scores for big data" << endl;
-    vector<PairIntInt > big_data_scores;
+    vector<PairFloatInt > big_data_scores;
     ifstream big_data_in_1(big_data.c_str());
     int tot_sent = 0;
     while(getline(big_data_in_1, line)) {
         NGramMap my_counts;
-        AddNGramCounts(line, n_gram_len, my_counts, n_gram_ids, false);
-        int my_score = CalculateCoverageScore(n_gram_counts, my_counts, threshold);
-        if(my_score)
-            big_data_scores.push_back(PairIntInt(my_score, tot_sent));
+        int len = AddNGramCounts(line, n_gram_len, my_counts, n_gram_ids, false);
+        float my_score = CalculateCoverageScore(n_gram_counts, my_counts, threshold)/(float)len;
+        if(len && my_score)
+            big_data_scores.push_back(PairFloatInt(my_score, tot_sent));
         tot_sent++;
+        if(tot_sent % 10000 == 0)  { cerr << "."; cerr.flush(); }
     }
+    cerr << endl;
     big_data_in_1.close();
     // BOOST_FOREACH(PairIntInt val, n_gram_counts)
     //     cerr << n_gram_ids.GetSymbol(val.first) << "\t" << val.second << endl;
@@ -104,10 +106,11 @@ void NabssRunner::Run(const ConfigNabssRunner & config) {
     std::tr1::unordered_map<int,int > sentence_lengths;
     int sent = 0;
     while(getline(big_data_in_2, line)) {
-        map<int,int>::const_iterator it = active_sentences.find(sent);
+        map<int,int>::iterator it = active_sentences.find(sent);
         if(it != active_sentences.end()) {
             NGramMap my_counts;
             int len = AddNGramCounts(line, n_gram_len, my_counts, n_gram_ids, true);
+            it->second = CalculateCoverageScore(n_gram_counts, my_counts, threshold);
             sentence_lengths[sent] = len;
             BOOST_FOREACH(PairIntInt count, my_counts) {
                 if(n_gram_counts[count.first] < threshold) {
@@ -117,7 +120,9 @@ void NabssRunner::Run(const ConfigNabssRunner & config) {
             }
         }
         sent++;
+        if(sent % 10000 == 0)  { cerr << "."; cerr.flush(); }
     }
+    cerr << endl;
     big_data_in_2.close();
     // Until there are no active sentences, iterate
     cerr << "Finding best sentences" << endl;
@@ -140,7 +145,7 @@ void NabssRunner::Run(const ConfigNabssRunner & config) {
         // n-gram, and remove sentences for which the score becomes zero
         BOOST_FOREACH(int ngram, index[my_max.first]) {
             if(++n_gram_counts[ngram] <= threshold) {
-                cerr << " " << n_gram_ids.GetSymbol(ngram) << " == " << n_gram_counts[ngram] << endl;
+                // cerr << " " << n_gram_ids.GetSymbol(ngram) << " == " << n_gram_counts[ngram] << endl;
                 BOOST_FOREACH(int sent_id, reverse_index[ngram])
                     if(--active_sentences[sent_id] == 0)
                         active_sentences.erase(sent_id);

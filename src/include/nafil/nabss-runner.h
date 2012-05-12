@@ -14,6 +14,7 @@ class NabssRunner {
 public:
 
     typedef std::pair<int,int> PairIntInt;
+    typedef std::pair<float,int> PairFloatInt;
     typedef std::tr1::unordered_map<int, int> NGramMap;
 
     NabssRunner() { }
