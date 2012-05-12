@@ -15,8 +15,8 @@ class ConfigNabssRunner : public ConfigBase {
 public:
 
     ConfigNabssRunner() : ConfigBase() {
-        minArgs_ = 3;
-        maxArgs_ = 4;
+        minArgs_ = 2;
+        maxArgs_ = 2;
 
         SetUsage(
 "~~~ nabss ~~~\n"
@@ -24,12 +24,13 @@ public:
 "\n"
 "Performs extremely simple bilingual sentence filtering, keeping only sentences\n"
 "with unusual n-grams.\n"
-"  Usage: nabss < [INPUT]\n"
+"  Usage: nabss [IN_DOMAIN] [OUT_DOMAIN] > [OUTPUT]\n"
 );
 
+        AddConfigEntry("n_gram_len", "3", "The max length of the n-grams to consider");
         AddConfigEntry("threshold", "5", "The threshold for unusual n-grams");
-        AddConfigEntry("use_len_ratio", "true", "Use length ratio features");
-        AddConfigEntry("use_model_one", "true", "Use model one features");
+        AddConfigEntry("process_n", "1000000", "Only consider the top n sentences");
+        AddConfigEntry("output_n", "50000", "Only output the top n sentences");
 
     }
 	
