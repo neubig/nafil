@@ -48,7 +48,8 @@ vector<int> NafilRunner::GetNumCognates(
         in_trg.insert(trg_vocab.GetSymbol(trg_sent[i]));
     for(tr1::unordered_set<string>::const_iterator it = in_src.begin();
             it != in_src.end(); it++) {
-        if(in_trg.find(*it) != in_trg.end())
+        // TODO: Figure out why length is zero
+        if(it->length() > 0 && in_trg.find(*it) != in_trg.end())
             ret[min(max_size,(int)it->length())-1]++;
     }
     return ret;
