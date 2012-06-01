@@ -1,5 +1,6 @@
 #include <nafil/file-loader.h>
 #include <fstream>
+#include <iostream>
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
 
@@ -14,7 +15,7 @@ bool FileLoader::LoadOneLine(
     string line;
     if(!getline(in, line)) return false;
     vector<string> vec;
-    algorithm::split(vec, line, is_any_of(" "));
+    algorithm::split(vec, line, is_any_of(" \t"));
     out.resize(vec.size());
     for(int i =0; i < (int)vec.size(); i++)
         out[i] = vocab.GetId(vec[i], add);
@@ -44,7 +45,7 @@ void FileLoader::LoadProbabilities(const string & file,
     ifstream in1(file.c_str());
     if(!in1) THROW_ERROR("Could not open file " << file);
     while(getline(in1, line)) {
-        algorithm::split(vec, line, is_any_of(" "));
+        algorithm::split(vec, line, is_any_of(" \t"));
         if(vec.size() != 3) THROW_ERROR("Invalid probability " << line);
         src_vocab.GetId(vec[0], true); trg_vocab.GetId(vec[1], true);
     }
@@ -53,10 +54,26 @@ void FileLoader::LoadProbabilities(const string & file,
     ifstream in2(file.c_str());
     int tv_size = trg_vocab.size();
     while(getline(in2, line)) {
-        algorithm::split(vec, line, is_any_of(" "));
+        algorithm::split(vec, line, is_any_of(" \t"));
         src_vocab.GetId(vec[0], true); trg_vocab.GetId(vec[1], true);
         WordPairId id = HashPair(src_vocab.GetId(vec[0], true), trg_vocab.GetId(vec[1], true), tv_size);
         s_given_t.insert(MakePair(id,atof(vec[2].c_str())));
     }
     in2.close();
+}
+
+void FileLoader::WriteProbabilities(ostream & out,
+                             SymbolSet<int> & src_vocab,
+                             SymbolSet<int> & trg_vocab,
+                             PairProbMap & s_given_t,
+                             double prob_cutoff) {
+    int trg_size = trg_vocab.size();
+    BOOST_FOREACH(PairProbMap::value_type val, s_given_t) {
+        if(val.second < prob_cutoff) continue;
+        int src_id = val.first/trg_size;
+        int trg_id = val.first%trg_size;
+        out << src_vocab.GetSymbol(src_id) << "\t"
+            << trg_vocab.GetSymbol(trg_id) << "\t"
+            << val.second << endl;
+    }
 }

@@ -2,6 +2,7 @@
 #define FILE_LOADER_H__
 
 #include <vector>
+#include <iostream>
 #include <nafil/symbol-set.h>
 
 namespace nafil {
@@ -24,6 +25,12 @@ public:
                              SymbolSet<int> & src_vocab,
                              SymbolSet<int> & trg_vocab,
                              PairProbMap & s_given_t);
+
+    static void WriteProbabilities(std::ostream & out,
+                            SymbolSet<int> & src_vocab,
+                            SymbolSet<int> & trg_vocab,
+                            PairProbMap & s_given_t,
+                            double prob_cutoff = 0);
 
 };
 

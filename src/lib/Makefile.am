@@ -1,4 +1,4 @@
-NAFILCPP = nafil.cc nafil-runner.cc nabss-runner.cc model-one-probs.cc namone-runner.cc file-loader.cc
+NAFILCPP = nafil.cc nafil-runner.cc nabss-runner.cc model-one-probs.cc namone-runner.cc file-loader.cc namone-trainer.cc
 
 
 AM_CPPFLAGS = -I$(srcdir)/../include

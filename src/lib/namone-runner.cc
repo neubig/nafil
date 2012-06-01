@@ -32,10 +32,10 @@ void NamoneRunner::Run(const ConfigNamoneRunner & config) {
     vector<int> src_sent, trg_sent;
     ifstream src_in(src_data.c_str()), trg_in(trg_data.c_str());
     while(true) {
-        getline(src_in, src_line); getline(trg_in, trg_line); 
-        if(FileLoader::LoadOneLine(src_in, src_vocab, src_sent, false) != 
-           FileLoader::LoadOneLine(trg_in, trg_vocab, trg_sent, false))
-            THROW_ERROR("File sizes don't match");
+        bool has_src = FileLoader::LoadOneLine(src_in, src_vocab, src_sent, false);
+        bool has_trg = FileLoader::LoadOneLine(trg_in, trg_vocab, trg_sent, false);
+        if(has_src != has_trg) THROW_ERROR("File sizes don't match");
+        if(!has_src) break; 
         double prob = ModelOneProbs::GetModelOneLogProb(src_sent, trg_sent, tv_size, s_given_t, unk_prob);
         cout << prob << endl;
     }
