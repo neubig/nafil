@@ -66,6 +66,34 @@ public:
         return ret;
     }
 
+    int TestTrainMono() {
+        vector<vector<int> > es;
+        int size = 3;
+        vector<int> sent(2,0);
+        sent[0] = 1; sent[1] = 2;
+        es.push_back(sent);
+        PairProbMap conds;
+        ModelOneProbs::TrainModelOne(es,es,size,size,conds,true);
+        int ret = 1;
+        double prob12 = conds[HashPair(1,2,size)];
+        double prob21 = conds[HashPair(2,1,size)];
+        if(prob12 != prob21) {
+            cerr << "Probs don't match: " << prob12 << " != " <<prob21 << endl;
+            ret = 0;
+        }
+        PairProbMap::const_iterator it11 = conds.find(HashPair(1,1,size));
+        PairProbMap::const_iterator it22 = conds.find(HashPair(2,2,size));
+        if(it11 != conds.end()) {
+            cerr << "Found P(1|1) == " << *it11 << endl;
+            ret = 0;
+        }
+        if(it22 != conds.end()) {
+            cerr << "Found P(2|2) == " << *it22 << endl;
+            ret = 0;
+        }
+        return ret;
+    }
+
     int TestMergeIntersect() {
         vector<int> s_given_t(3,0), t_given_s(2,0);
         s_given_t[2] = 1; t_given_s[1] = 2;
@@ -81,6 +109,7 @@ public:
         done++; cout << "TestModelOneViterbi()" << endl; if(TestModelOneViterbi()) succeeded++; else cout << "FAILED!!!" << endl;
         done++; cout << "TestMergeIntersect()" << endl; if(TestMergeIntersect()) succeeded++; else cout << "FAILED!!!" << endl;
         done++; cout << "TestTrainOverflow()" << endl; if(TestTrainOverflow()) succeeded++; else cout << "FAILED!!!" << endl;
+        done++; cout << "TestTrainMono()" << endl; if(TestTrainMono()) succeeded++; else cout << "FAILED!!!" << endl;
         cout << "#### TestModelOneProbs Finished with "<<succeeded<<"/"<<done<<" tests succeeding ####"<<endl;
         return done == succeeded;
     }

@@ -15,7 +15,7 @@ class ConfigNamoneTrainer : public ConfigBase {
 public:
 
     ConfigNamoneTrainer() : ConfigBase() {
-        minArgs_ = 2;
+        minArgs_ = 1;
         maxArgs_ = 2;
 
         SetUsage(
@@ -23,10 +23,12 @@ public:
 "  by Graham Neubig\n"
 "\n"
 "Trains IBM Model 1 using a parallel corpus.\n"
-"  Usage: namone F_FILE E_FILE > OUTPUT\n"
+"  Usage ( bilingual ): namone F_FILE E_FILE > OUTPUT\n"
+"  Usage (monolingual): namone -mono true E_FILE > OUTPUT\n"
 );
 
         AddConfigEntry("prob_cutoff", "1e-7", "Don't output any values less than this");
+        AddConfigEntry("mono", "true", "Don't output any values less than this");
 
     }
 	

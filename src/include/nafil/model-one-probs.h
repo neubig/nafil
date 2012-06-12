@@ -9,10 +9,15 @@ namespace nafil {
 class ModelOneProbs {
 
 public:
-    static void TrainModelOne(const std::vector< std::vector<int> > & es, 
+    // Train model one probabilities given a corpus pair
+    // If monolingual is false, all vectors in es and fs must be identical
+    // and words in the identical position in the vector will not be used
+    static void TrainModelOne(
+                       const std::vector< std::vector<int> > & es, 
                        const std::vector< std::vector<int> > & fs, 
                        int eSize, int fSize,
-                       PairProbMap & conds);
+                       PairProbMap & conds,
+                       bool monolingual = false);
 
     static double GetModelOneLogProb(
                 const std::vector<int> & src_sent,

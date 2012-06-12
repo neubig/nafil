@@ -14,7 +14,10 @@ using namespace boost;
 void ModelOneProbs::TrainModelOne(const vector< vector<int> > & es, 
                                 const vector< vector<int> > & fs, 
                                 int eSize, int fSize,
-                                PairProbMap & conds) {
+                                PairProbMap & conds,
+                                bool monolingual) {
+    if(monolingual && (&es != &fs))
+        THROW_ERROR("Attempting monolingual model one training with non-identical training corpora");
     PairProbMap count;
     std::vector<double> total(fSize), tBuff;
     std::vector< WordPairId > pBuff;
@@ -25,6 +28,8 @@ void ModelOneProbs::TrainModelOne(const vector< vector<int> > & es,
     for(i = 0; i < (int)es.size(); i++) {
         for(j = 0; j < (int)es[i].size(); j++) {
             for(k = 0; k < (int)fs[i].size(); k++) {
+                if(monolingual && j == k)
+                    continue;
                 WordPairId id = HashPair(es[i][j],fs[i][k],fSize);
                 conds.insert(PairProbMap::value_type(id,uniProb));
                 count.insert(PairProbMap::value_type(id,0.0));
@@ -58,6 +63,7 @@ void ModelOneProbs::TrainModelOne(const vector< vector<int> > & es,
                 sTotal = 0;
                 // do words + null
                 for(k = 0; k < fsSize; k++) {
+                    if(monolingual && j == k) continue;
                     pBuff[k] = HashPair(es[i][j],fs[i][k],fSize);
                     tBuff[k] = conds.find(pBuff[k])->second;
                     sTotal += tBuff[k];
@@ -66,9 +72,10 @@ void ModelOneProbs::TrainModelOne(const vector< vector<int> > & es,
                 tBuff[k] = conds.find(pBuff[k])->second;
                 sTotal += tBuff[k];
                 // likelihood
-                lik += log(sTotal/(fsSize+1));
+                lik += log(sTotal/(fsSize+(monolingual?0:1)));
                 // do words + null
                 for(k = 0; k < (int)fsSize+1; k++) {
+                    if(monolingual && j == k) continue;
                     norm = tBuff[k]/sTotal;
                     count[pBuff[k]] += norm;
                     SafeAccess(total, pBuff[k]%fSize) += norm;
