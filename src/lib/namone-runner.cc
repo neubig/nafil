@@ -18,25 +18,36 @@ using namespace boost;
 void NamoneRunner::Run(const ConfigNamoneRunner & config) {
     string line;
     // Load the configuration
+    bool mono = config.GetBool("mono");
     double unk_prob = config.GetDouble("unk_prob");
-    string src_data = config.GetMainArgs()[0];
-    string trg_data = config.GetMainArgs()[1];
-    string prob_data = config.GetMainArgs()[2];
-    // Read the probabilities
+    const vector<string> & args = config.GetMainArgs();
     SymbolSet<int> src_vocab, trg_vocab;
     PairProbMap s_given_t;
-    FileLoader::LoadProbabilities(prob_data, src_vocab, trg_vocab, s_given_t);
-    int tv_size = trg_vocab.size();    
+    int tv_size;
+    if(mono) {
+        if(args.size() != 2)
+            THROW_ERROR("Must provide exactly E_DATA and E_GIVEN_E for monolingual processing");
+        FileLoader::LoadProbabilities(config.GetMainArgs()[1], src_vocab, src_vocab, s_given_t);
+        tv_size = src_vocab.size();
+    } else {
+        THROW_ERROR("Must provide exactly F_DATA E_DATA and F_GIVEN_E for bililingual processing");
+        FileLoader::LoadProbabilities(config.GetMainArgs()[2], src_vocab, trg_vocab, s_given_t);
+        tv_size = trg_vocab.size();
+    }
     // Read in the lines
     string src_line, trg_line;
     vector<int> src_sent, trg_sent;
-    ifstream src_in(src_data.c_str()), trg_in(trg_data.c_str());
+    ifstream *src_in = new ifstream(config.GetMainArgs()[0].c_str()), *trg_in = NULL;
+    if(!mono)
+        trg_in = new ifstream(config.GetMainArgs()[1].c_str());
     while(true) {
-        bool has_src = FileLoader::LoadOneLine(src_in, src_vocab, src_sent, false);
-        bool has_trg = FileLoader::LoadOneLine(trg_in, trg_vocab, trg_sent, false);
-        if(has_src != has_trg) THROW_ERROR("File sizes don't match");
+        bool has_src = FileLoader::LoadOneLine(*src_in, src_vocab, src_sent, false);
+        if(!mono) {
+            bool has_trg = FileLoader::LoadOneLine(*trg_in, trg_vocab, trg_sent, false);
+            if(has_src != has_trg) THROW_ERROR("File sizes don't match");
+        }
         if(!has_src) break; 
-        double prob = ModelOneProbs::GetModelOneLogProb(src_sent, trg_sent, tv_size, s_given_t, unk_prob);
+        double prob = ModelOneProbs::GetModelOneLogProb(src_sent, (mono?src_sent:trg_sent),tv_size, s_given_t, unk_prob);
         cout << prob << endl;
     }
 }

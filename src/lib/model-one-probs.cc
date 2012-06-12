@@ -106,13 +106,15 @@ vector<int> ModelOneProbs::GetModelOneAlignments(
             const vector<int> & src_sent,
             const vector<int> & trg_sent,
             int trg_size,
-            const PairProbMap & s_given_t) {
+            const PairProbMap & s_given_t,
+            bool mono) {
     const int src_len = src_sent.size(), trg_len = trg_sent.size();
     vector<int> ret(src_len,-1);
     for(int i = 0; i < src_len; i++) {
         PairProbMap::const_iterator it = s_given_t.find(HashPair(src_sent[i], 0, trg_size));
         double max_prob = (it == s_given_t.end() ? -DBL_MAX : it->second);
         for(int j = 0; j < trg_len; j++) {
+            if(mono && i==j) continue;
             it = s_given_t.find(HashPair(src_sent[i],trg_sent[j],trg_size));
             if(it != s_given_t.end() && it->second > max_prob) {
                 max_prob = it->second;
@@ -128,7 +130,10 @@ double ModelOneProbs::GetModelOneLogProb(
             const vector<int> & trg_sent,
             int trg_size,
             const PairProbMap & s_given_t,
-            double unk_prob) {
+            double unk_prob,
+            bool mono) {
+    if(mono && &src_sent != &trg_sent)
+        THROW_ERROR("Monolingual sentences are not equal");
     int src_len = src_sent.size();
     int trg_len = trg_sent.size();
     double ret = 0;
@@ -140,10 +145,11 @@ double ModelOneProbs::GetModelOneLogProb(
         curr_prob += (it != s_given_t.end() ? it->second : unk_prob);
         // Get the other probabilities
         for(int j = 0; j < trg_len; j++) {
+            if(mono && i==j) continue;
             it = s_given_t.find(HashPair(src_sent[i],trg_sent[j],trg_size));
             if(it != s_given_t.end()) curr_prob += it->second;
         }
-        ret += log(curr_prob / (trg_len+1));
+        ret += log(curr_prob / (trg_len+(mono?0:1)));
     }
     return ret;
 }

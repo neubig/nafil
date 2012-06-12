@@ -23,12 +23,12 @@ public:
 "  by Graham Neubig\n"
 "\n"
 "Trains IBM Model 1 using a parallel corpus.\n"
-"  Usage ( bilingual ): namone F_FILE E_FILE > OUTPUT\n"
-"  Usage (monolingual): namone -mono true E_FILE > OUTPUT\n"
+"  Usage ( bilingual ): train-namone F_FILE E_FILE > OUTPUT\n"
+"  Usage (monolingual): train-namone -mono true E_FILE > OUTPUT\n"
 );
 
         AddConfigEntry("prob_cutoff", "1e-7", "Don't output any values less than this");
-        AddConfigEntry("mono", "true", "Don't output any values less than this");
+        AddConfigEntry("mono", "true", "Do monolingual training");
 
     }
 	
