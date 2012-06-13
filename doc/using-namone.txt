@@ -1,0 +1,39 @@
+------------------------------------------------------------------------------
+-- Namone:                                                                  --
+--   A program to calculate Model One scores for parallel or monolingual    --
+--   sentences.                                                             --
+--       by Graham Neubig 2012-6-13                                         --
+------------------------------------------------------------------------------
+
+**** 1) Training Model One ****
+
+The program "train-namone" can be used to learn Model one probabilities from
+a parallel corpus.
+
+Let's say that we have two files in French and English:
+> train.fr
+> train.en
+
+In order to train model one probabilities for P(fr|en), we run
+$ train-namone train.fr train.en > probabilities.fr-en
+
+We can calculate the probabilities in the opposite direction P(en|fr) also:
+$ train-namone train.en train.fr > probabilities.en-fr
+
+Finally, it is possible to calculate monolingual model one probabilities,
+which are similar to a Trigger-based language model. Let's say we want to
+calculate P(en|en):
+$ train-namone -mono true train.en > probabilities.en-en
+
+**** 2) Calculating Model One ****
+
+Given a separate set of test data:
+> test.fr
+> test.en
+
+We can calculate model one probabilities P(fr|en) and P(en|fr) using "namone":
+$ namone test.fr test.en probabilities.fr-en > test.fr-en.scores
+$ namone test.en test.fr probabilities.en-fr > test.en-fr.scores
+
+We can also calculate monolingual model one probabilities P(en|en):
+$ namone -mono true test.en probabilities.en-en > test.en-en.scores
