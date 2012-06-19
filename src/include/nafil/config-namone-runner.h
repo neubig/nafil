@@ -28,7 +28,8 @@ public:
 );
 
         AddConfigEntry("unk_prob", "1e-7", "The probability to assign to unknown words");
-        AddConfigEntry("mono", "true", "Do monolingual processing");
+        AddConfigEntry("mono", "false", "Do monolingual processing");
+        AddConfigEntry("norm", "true", "Normalize probabilities by sentence length");
 
     }
 	

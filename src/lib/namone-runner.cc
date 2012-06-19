@@ -30,7 +30,8 @@ void NamoneRunner::Run(const ConfigNamoneRunner & config) {
         FileLoader::LoadProbabilities(config.GetMainArgs()[1], src_vocab, src_vocab, s_given_t);
         tv_size = src_vocab.size();
     } else {
-        THROW_ERROR("Must provide exactly F_DATA E_DATA and F_GIVEN_E for bililingual processing");
+        if(args.size() != 3)
+            THROW_ERROR("Must provide exactly F_DATA E_DATA and F_GIVEN_E for bililingual processing");
         FileLoader::LoadProbabilities(config.GetMainArgs()[2], src_vocab, trg_vocab, s_given_t);
         tv_size = trg_vocab.size();
     }
@@ -48,6 +49,8 @@ void NamoneRunner::Run(const ConfigNamoneRunner & config) {
         }
         if(!has_src) break; 
         double prob = ModelOneProbs::GetModelOneLogProb(src_sent, (mono?src_sent:trg_sent),tv_size, s_given_t, unk_prob);
+        if(config.GetBool("norm"))
+            prob /= src_sent.size() - (mono?1:0);
         cout << prob << endl;
     }
 }
