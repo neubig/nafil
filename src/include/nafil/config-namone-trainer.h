@@ -28,7 +28,7 @@ public:
 );
 
         AddConfigEntry("prob_cutoff", "1e-7", "Don't output any values less than this");
-        AddConfigEntry("mono", "true", "Do monolingual training");
+        AddConfigEntry("mono", "false", "Do monolingual training");
 
     }
 	
