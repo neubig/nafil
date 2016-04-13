@@ -18,7 +18,7 @@ using namespace std;
 using namespace boost;
 
 vector<int> NafilRunner::GetNumCognates(
-    const vector<int> & src_sent,
+    const vector<nt> & src_sent,
     const vector<int> & trg_sent,
     SymbolSet<int> & src_vocab,
     SymbolSet<int> & trg_vocab,

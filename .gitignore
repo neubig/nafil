@@ -14,7 +14,6 @@ config.guess
 install-sh
 libtool
 ltmain.sh
-m4
 .libs
 .deps
 Makefile
@@ -24,3 +23,8 @@ nafil
 namone
 train-namone
 test-nafil
+libtool.m4
+lt~obsolete.m4
+ltoptions.m4
+ltsugar.m4
+ltversion.m4
