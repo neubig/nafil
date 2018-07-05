@@ -5,7 +5,7 @@
 #include <fstream>
 #include <nafil/config-nabss-runner.h>
 #include <nafil/symbol-set.h>
-#include <tr1/unordered_map>
+#include <unordered_map>
 
 namespace nafil {
 
@@ -15,7 +15,7 @@ public:
 
     typedef std::pair<int,int> PairIntInt;
     typedef std::pair<float,int> PairFloatInt;
-    typedef std::tr1::unordered_map<int, int> NGramMap;
+    typedef std::unordered_map<int, int> NGramMap;
 
     NabssRunner() { }
     ~NabssRunner() { }

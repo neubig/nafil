@@ -5,7 +5,7 @@
 #include <fstream>
 #include <nafil/config-namone-runner.h>
 #include <nafil/symbol-set.h>
-#include <tr1/unordered_map>
+#include <unordered_map>
 
 namespace nafil {
 

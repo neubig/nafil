@@ -102,8 +102,8 @@ void NabssRunner::Run(const ConfigNabssRunner & config) {
     cerr << "Reading in the active sentences" << endl;
     ifstream big_data_in_2(big_data.c_str());
     // The reverse index maps n-grams to sentences that contain them
-    std::tr1::unordered_map<int,vector<int> > index, reverse_index;
-    std::tr1::unordered_map<int,int > sentence_lengths;
+    std::unordered_map<int,vector<int> > index, reverse_index;
+    std::unordered_map<int,int > sentence_lengths;
     int sent = 0;
     while(getline(big_data_in_2, line)) {
         map<int,int>::iterator it = active_sentences.find(sent);

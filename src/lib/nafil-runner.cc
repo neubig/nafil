@@ -6,8 +6,8 @@
 #include <boost/tokenizer.hpp>
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
-#include <tr1/unordered_map>
-#include <tr1/unordered_set>
+#include <unordered_map>
+#include <unordered_set>
 #include <fstream>
 #include <string>
 #include <algorithm>
@@ -24,13 +24,13 @@ vector<int> NafilRunner::GetNumCognates(
     SymbolSet<int> & trg_vocab,
     int max_size) {
     vector<int> ret(max_size, 0);
-    tr1::unordered_set<string> in_src, in_trg;
+    unordered_set<string> in_src, in_trg;
     const int src_len = src_sent.size(), trg_len = trg_sent.size();
     for(int i = 0; i < src_len; i++)
         in_src.insert(src_vocab.GetSymbol(src_sent[i]));
     for(int i = 0; i < trg_len; i++)
         in_trg.insert(trg_vocab.GetSymbol(trg_sent[i]));
-    for(tr1::unordered_set<string>::const_iterator it = in_src.begin();
+    for(unordered_set<string>::const_iterator it = in_src.begin();
             it != in_src.end(); it++) {
         // TODO: Figure out why length is zero
         if(it->length() > 0 && in_trg.find(*it) != in_trg.end())

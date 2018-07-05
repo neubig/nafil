@@ -7,7 +7,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <algorithm>
-#include <tr1/unordered_map>
+#include <unordered_map>
 
 #define NAFIL_SAFE
 
@@ -16,26 +16,9 @@
     oss << msg;                                 \
     throw std::runtime_error(oss.str()); }       \
   while (0);
-
-#ifdef HAVE_TR1_UNORDERED_MAP
-#   include <tr1/unordered_map>
-    template <class T>
-    class StringMap : public std::tr1::unordered_map<std::string,T> { };
-#elif HAVE_EXT_HASH_MAP
-#   include <ext/hash_map>
-    namespace __gnu_cxx {
-    template <>
-    struct hash<std::string> {
-    size_t operator() (const std::string& x) const { return hash<const char*>()(x.c_str()); }
-    };
-    }
-    template <class T>
-    class StringMap : public __gnu_cxx::hash_map<std::string,T> { };
-#else
-#   include <map>
-    template <class T>
-    class StringMap : public std::map<std::string,T> { };
-#endif
+  
+template <class T>
+class StringMap : public std::unordered_map<std::string,T> { };
 
 namespace std {
 
@@ -110,9 +93,9 @@ inline std::pair<X,Y> MakePair(const X & x, const Y & y) {
 //     }
 // };
 // 
-// typedef std::tr1::unordered_map< std::pair<int, int>, double, nafil::PairHash<int> > PairProbMap;
+// typedef std::unordered_map< std::pair<int, int>, double, nafil::PairHash<int> > PairProbMap;
 typedef long long WordPairId;
-typedef std::tr1::unordered_map< WordPairId, double > PairProbMap;
+typedef std::unordered_map< WordPairId, double > PairProbMap;
 inline WordPairId HashPair(int x, int y, int yMax) {
     return (WordPairId)x*yMax+y;
 }

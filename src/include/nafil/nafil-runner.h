@@ -6,7 +6,7 @@
 #include <nafil/config-nafil-runner.h>
 #include <nafil/symbol-set.h>
 #include <nafil/model-one-probs.h>
-#include <tr1/unordered_map>
+#include <unordered_map>
 
 namespace nafil {
 
