@@ -1,4 +1,0 @@
-This is a repository for some tools to handle parallel corpora:
-* nafil: Performs sentence filtering for noisy corpora
-* namone: Trains IBM model one
-* nabss: Performs bilingual sentence selection
